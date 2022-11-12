@@ -1,0 +1,4 @@
+To Do:
+Dockerise this file
+Ensure NLTK and Transformers can be installed here!
+Implement either RabbitMQ or Requests package
