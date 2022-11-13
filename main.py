@@ -1,9 +1,7 @@
 from pipelines import pipeline
 import pika
-
-# !/usr/bin/env python
-import pika
-import time
+import json
+from sqlalchemy_orm import SQLStuff
 
 
 class QuestionGen:
@@ -15,7 +13,7 @@ class QuestionGen:
         """
         Process and print the stored text
         """
-        print(self.nlp(text))
+        return self.nlp(text)[0]
 
 
 connection = pika.BlockingConnection(
@@ -23,14 +21,16 @@ connection = pika.BlockingConnection(
 channel = connection.channel()
 
 channel.queue_declare(queue='task_queue', durable=True)
+
+# Initiate Question Generation Pipeline
 QG = QuestionGen()
-print(' [*] Waiting for messages. To exit press CTRL+C')
+# Initiate SQLConnector
+control = SQLStuff("root", "root", "localhost", "3306", "02db")
 
 
 def callback(ch, method, properties, body):
-    print(" [x] Received %r" % body.decode())
-    QG.processText(body.decode())
-    print(" [x] Done")
+    result = QG.processText(body.decode())
+    control.insert(name=result, color=result)
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
