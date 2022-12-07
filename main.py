@@ -64,13 +64,12 @@ def callback(ch, method, properties, body):
         questionID = QA_control.insertQuestion(ID, question)[0]
         # print(questionID)
         # Generate Answer Queue Job
-        queueAnswerJob(str(questionID))
+        # queueAnswerJob(str(questionID))
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
 channel.basic_qos(prefetch_count=1)
 channel.basic_consume(queue='QuestGen', on_message_callback=callback)
 
-# print('ReadyToConsume')
-
+print('ReadyToConsume')
 channel.start_consuming()
